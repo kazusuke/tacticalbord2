@@ -194,7 +194,39 @@
     background-color: rgba(220, 38, 38, 0.2);
 }
 
-@media (max-width: 767px) {
+.activeSuspended {
+    color: #ef4444;
+    opacity: 1;
+}
+
+/* Mobile Handle - Always defined but hidden on desktop */
+.mobileHandle {
+    width: 100%;
+    padding: 0.75rem;
+    display: none;
+    /* Hidden by default (desktop) */
+    justify-content: center;
+    cursor: pointer;
+    background: transparent;
+    touch-action: none;
+}
+
+.handleBar {
+    width: 3rem;
+    height: 0.25rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 9999px;
+}
+
+/* State classes */
+.isCollapsed {}
+
+.isExpanded {}
+
+
+@media (max-width: 768px) {
+    /* Changed to 768px to catch tablets/large phones */
+
     .panel {
         background: var(--bg-panel);
         border: none;
@@ -209,29 +241,12 @@
         width: 100%;
     }
 
-    /* Handle for dragging/tapping */
     .mobileHandle {
-        width: 100%;
-        padding: 0.75rem;
         display: flex;
-        justify-content: center;
-        cursor: pointer;
-        background: transparent;
-        touch-action: none;
+        /* Show on mobile */
     }
 
-    .handleBar {
-        width: 3rem;
-        height: 0.25rem;
-        background-color: rgba(255, 255, 255, 0.2);
-        border-radius: 9999px;
-    }
-
-    /* Collapsed State: Show horizontal scroll of players? */
-    .list {
-        /* Default grid for desktop, but override for mobile */
-    }
-
+    /* Collapsed State */
     .isCollapsed .list {
         display: flex;
         overflow-x: auto;

@@ -36,7 +36,7 @@
     /* Allow scrolling within main column if needed */
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
     .mainColumn {
         padding-bottom: 5rem;
         /* Space for collapsed roster */
@@ -65,7 +65,7 @@
     z-index: 50;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
     .rosterColumn {
         position: fixed;
         bottom: 0;
@@ -82,7 +82,7 @@
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
     .rosterColumn {
         width: 20rem;
         /* w-80 */
