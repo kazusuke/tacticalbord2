@@ -1,0 +1,200 @@
+.panel {
+    height: 100%;
+    overflow-y: auto;
+    min-height: 400px;
+    padding: 1rem;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.addBtn {
+    padding: 0.5rem;
+    background-color: var(--accent);
+    color: var(--bg-app);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.addBtn:hover {
+    background-color: var(--accent-hover);
+    transform: scale(1.1);
+}
+
+.list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+}
+
+.playerRow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    background-color: rgba(255, 255, 255, 0.05);
+    transition: background-color 0.2s;
+    border: 1px solid transparent;
+    /* Prepare for border */
+}
+
+.playerRow:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Remove opacity, use highlight border/bg instead? */
+.onField {
+    background-color: rgba(74, 222, 128, 0.1);
+    /* Subtle green tint */
+    border-color: rgba(74, 222, 128, 0.3);
+}
+
+.suspended {
+    background-color: rgba(220, 38, 38, 0.1);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.tokenContainer {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+}
+
+.fieldIndicator {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #16a34a;
+    /* Keeping it green to show ON */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 0 10px rgba(22, 163, 74, 0.5);
+}
+
+.suspendedIndicator {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.playerInfo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.playerName {
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+}
+
+/* Timeline Container */
+.timeline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.blocks {
+    display: flex;
+    gap: 2px;
+}
+
+.block {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.playedBlock {
+    background-color: #3b82f6;
+    /* Blue for played */
+}
+
+.currentBlock {
+    border: 1px solid white;
+    /* Highlight current period? Maybe too noisy. Skip for now. */
+}
+
+.suspendedBlock {
+    background-color: #ef4444;
+}
+
+.timeText {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-feature-settings: "tnum";
+    min-width: 3.5rem;
+    /* Align times */
+    text-align: right;
+}
+
+.actions {
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.playerRow:hover .actions {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .actions {
+        opacity: 1;
+    }
+}
+
+.actionBtn {
+    padding: 0.25rem;
+    color: #9ca3af;
+    border-radius: 4px;
+}
+
+.actionBtn:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.deleteBtn:hover {
+    color: #fca5a5;
+    background-color: rgba(220, 38, 38, 0.2);
+}
+
+.activeSuspended {
+    color: #ef4444;
+    opacity: 1;
+}

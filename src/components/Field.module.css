@@ -1,0 +1,180 @@
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    user-select: none;
+    /* 
+     Full pitch is roughly 2/3 aspect ratio (68m x 105m).
+     We want bottom 2/3 of that.
+     So Height is 2/3 of original.
+     Original Ratio (W/H) = 68/105 ~= 0.65.
+     New Height = 105 * 0.66 ~= 70m.
+     New Ratio = 68/70 ~= 0.97 (~Square).
+     Let's make it aspect-ratio: 1/1 for simplicity or slightly taller?
+     Let's stick to visual logic.
+     If we want strictly "2/3 of the Vertical Field", and the original was aspect 2/3.
+     Then height was 1.5 * Width.
+     New Height is 1.0 * Width.
+     So aspect-ratio: 1/1.
+  */
+    aspect-ratio: 1/1;
+}
+
+/* On desktop, limit height */
+@media (min-height: 800px) {
+    .container {
+        height: 80vh;
+        width: auto;
+        aspect-ratio: 1/1;
+    }
+}
+
+.field {
+    width: 100%;
+    height: 100%;
+    background-color: #2e8b57;
+    background-image: linear-gradient(to bottom, var(--bg-field-start, #4ade80), var(--bg-field-end, #16a34a));
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 4px solid white;
+    /* Top border dashed to indicate cut-off? */
+    border-top: 4px dashed rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* 
+   Coordinate System:
+   We are now mapping 0-100% of this container to the Bottom 2/3 of the real pitch.
+   Real Pitch Top (Away Goal) is at y < 0 (outside).
+   Real Pitch Bottom (Home Goal) is at y = 100%.
+   
+   Markings Placement (New % relative to this container):
+   Full Pitch Height = H_real.
+   Container Height = H_view = 0.66 * H_real.
+   
+   Bottom Goal: Bottom 0.
+   Bottom Box Top: 16% of H_real. 
+      In new view: (0.16 * H_real) / H_view = 0.16 / 0.66 = 24%.
+      So Box Top is at 100% - 24% = 76%. (Wait, top-down coordinate?)
+      Let's use Bottom-Up for calculations.
+      Box Height is 24% of View Height. 
+      So Top of Box is at bottom: 24%.
+      
+   Halfway Line: 50% of H_real.
+      In new view: (0.50 * H_real) / H_view = 0.50 / 0.66 = 75%.
+      So Halfway Line is at bottom: 75% (or Top: 25%).
+      
+   Center Circle: Centered on Halfway Line.
+*/
+
+.markingOuter {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-top: none;
+    /* Open at top */
+    pointer-events: none;
+}
+
+.midfieldLine {
+    position: absolute;
+    top: 25%;
+    /* 100% - 75% */
+    left: 0;
+    right: 0;
+    border-top: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+.centerCircle {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    width: 20%;
+    aspect-ratio: 1;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.centerSpot {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.boxBottom {
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    width: 60%;
+    height: 24%;
+    /* Scaled for 2/3 view */
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-bottom: none;
+}
+
+.boxBottomInner {
+    position: absolute;
+    bottom: 0;
+    left: 36%;
+    width: 28%;
+    height: 9%;
+    /* 6% / 0.66 */
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-bottom: none;
+}
+
+.arcBottom {
+    position: absolute;
+    bottom: 24%;
+    left: 50%;
+    width: 20%;
+    height: 10%;
+    /* Approximation */
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-bottom: none;
+    border-top-left-radius: 100%;
+    border-top-right-radius: 100%;
+    transform: translate(-50%, 0);
+}
+
+/* Hide top elems from full pitch */
+.boxTop,
+.boxTopInner,
+.arcTop,
+.cornerTopLeft,
+.cornerTopRight {
+    display: none;
+}
+
+.cornerBottomLeft {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 2%;
+    height: 2%;
+    border-top: 2px solid rgba(255, 255, 255, 0.6);
+    border-right: 2px solid rgba(255, 255, 255, 0.6);
+    border-top-right-radius: 100%;
+}
+
+.cornerBottomRight {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 2%;
+    height: 2%;
+    border-top: 2px solid rgba(255, 255, 255, 0.6);
+    border-left: 2px solid rgba(255, 255, 255, 0.6);
+    border-top-left-radius: 100%;
+}
