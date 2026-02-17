@@ -6,6 +6,7 @@ import { Controls } from './components/Controls';
 import { Roster } from './components/Roster';
 import { PlayerToken } from './components/PlayerToken';
 import { PlayerSelectionModal } from './components/PlayerSelectionModal';
+import { PlaytimeModal } from './components/PlaytimeModal';
 import { INITIAL_ROSTER, FORMATION_PRESETS, PERIOD_minutes } from './constants';
 import './index.css';
 import styles from './App.module.css';
@@ -25,6 +26,9 @@ export default function App() {
   // Substitution Modal State
   const [isSubstitutionModalOpen, setIsSubstitutionModalOpen] = useState(false);
   const [substitutionTargetId, setSubstitutionTargetId] = useState(null);
+
+  // Playtime Modal State
+  const [isPlaytimeModalOpen, setIsPlaytimeModalOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -312,6 +316,12 @@ export default function App() {
 
   const activeSet = new Set(Object.keys(periodsData[activePeriod] || {}));
 
+  // Filter roster for Bottom Sheet: Show Bench + Suspended (i.e., NOT on field)
+  // Wait, if they are suspended but not on field, they are shown.
+  // Actually, suspended players cannot be on field.
+  // So: Show players NOT in activeSet.
+  const bottomRosterList = roster.filter(p => !activeSet.has(p.id));
+
   return (
     <DndContext
       sensors={sensors}
@@ -331,6 +341,7 @@ export default function App() {
             onCopyPrevious={copyPreviousPeriod}
             onReset={handleSmartReset}
             onSetFormation={(fmt) => applyFormation(activePeriod, fmt)}
+            onShowPlaytime={() => setIsPlaytimeModalOpen(true)}
           />
 
           <Field
@@ -342,7 +353,7 @@ export default function App() {
 
         <div className={styles.rosterColumn}>
           <Roster
-            players={roster}
+            players={bottomRosterList}
             fieldPlayers={activeSet}
             playingTimes={playingTimes}
             playedPeriods={playedPeriods}
@@ -361,6 +372,15 @@ export default function App() {
         onSelectPlayer={handleSubstitution}
         activePeriod={activePeriod}
         fieldPlayers={activeSet}
+      />
+
+      <PlaytimeModal
+        isOpen={isPlaytimeModalOpen}
+        onClose={() => setIsPlaytimeModalOpen(false)}
+        players={roster}
+        playingTimes={playingTimes}
+        playedPeriods={playedPeriods}
+        activePeriod={activePeriod}
       />
 
       <DragOverlay>

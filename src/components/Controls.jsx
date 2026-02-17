@@ -1,6 +1,6 @@
 import React from 'react';
 import { PERIODS, FORMATION_PRESETS } from '../constants';
-import { Copy, RotateCcw } from 'lucide-react';
+import { Copy, RotateCcw, Clock } from 'lucide-react';
 import styles from './Controls.module.css';
 
 export function Controls({
@@ -8,7 +8,8 @@ export function Controls({
     setActivePeriod,
     onCopyPrevious,
     onReset,
-    onSetFormation
+    onSetFormation,
+    onShowPlaytime
 }) {
     return (
         <div className={`glass-panel ${styles.panel}`}>
@@ -25,6 +26,10 @@ export function Controls({
             </div>
 
             <div className={styles.actions}>
+                <button onClick={onShowPlaytime} className="btn btn-secondary" title="Show Playtime Stats">
+                    <Clock size={16} />
+                </button>
+
                 {activePeriod > 1 && (
                     <button onClick={onCopyPrevious} className="btn btn-secondary" title="Copy formation from previous period">
                         <Copy size={16} />
