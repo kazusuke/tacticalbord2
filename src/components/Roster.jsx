@@ -1,15 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PlayerToken } from './PlayerToken';
-import { Plus, Trash2, Users, Ban } from 'lucide-react';
+import { Plus, Trash2, Users, Ban, ChevronUp, ChevronDown } from 'lucide-react';
 import styles from './Roster.module.css';
-import { PERIODS } from '../constants'; // Import PERIODS [1, 2, 3, 4]
+import { PERIODS } from '../constants';
 
 export function Roster({ players, fieldPlayers, playingTimes, playedPeriods, onAddPlayer, onDeletePlayer, onToggleSuspended, activePeriod }) {
+    // Default to collapsed on mobile
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const toggleExpand = () => setIsExpanded(!isExpanded);
+
     return (
-        <div className={`glass-panel ${styles.panel}`}>
+        <div className={`glass-panel ${styles.panel} ${isExpanded ? styles.isExpanded : styles.isCollapsed}`}>
+            {/* Mobile Handle */}
+            <div className={styles.mobileHandle} onClick={toggleExpand}>
+                <div className={styles.handleBar}></div>
+            </div>
+
             <div className={styles.header}>
-                <h2 className={styles.title}>
-                    <Users size={20} /> Roster
+                <h2 className={styles.title} onClick={toggleExpand}>
+                    <Users size={20} />
+                    <span>Roster</span>
+                    {isExpanded ? <ChevronDown size={16} className="md:hidden" /> : <ChevronUp size={16} className="md:hidden" />}
                 </h2>
                 <button onClick={onAddPlayer} className={`btn btn-primary ${styles.addBtn}`}>
                     <Plus size={16} />
