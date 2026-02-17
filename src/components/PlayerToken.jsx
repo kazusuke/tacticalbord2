@@ -15,15 +15,42 @@ export function PlayerToken({ player, id, style = {}, className = '', showName =
         ...style,
     };
 
+    // Manual click detection to work reliably with dnd-kit
+    const [startPos, setStartPos] = React.useState(null);
+
+    const handlePointerDown = (e) => {
+        setStartPos({ x: e.clientX, y: e.clientY });
+        // Call dnd-kit listener
+        listeners.onPointerDown(e);
+    };
+
+    const handlePointerUp = (e) => {
+        if (startPos && onClick) {
+            const dist = Math.sqrt(
+                Math.pow(e.clientX - startPos.x, 2) + Math.pow(e.clientY - startPos.y, 2)
+            );
+            if (dist < 5) {
+                // It's a click
+                onClick();
+            }
+        }
+        setStartPos(null);
+        // Note: dnd-kit might handle pointer up globally, but we hook here for click
+    };
+
     return (
         <div
             ref={setNodeRef}
             style={draggingStyle}
-            {...listeners}
             {...attributes}
+            // Spread listeners but override pointer handlers if needed, 
+            // actually we need to composite them.
+            // dnd-kit listeners: onPointerDown, onKeyDown
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onKeyDown={listeners.onKeyDown}
             className={`${styles.token} ${isDragging ? styles.isDragging : ''} ${className}`}
             title={player.name}
-            onClick={onClick} // Attach onClick
         >
             <div className={styles.circle}>
                 {player.number}
