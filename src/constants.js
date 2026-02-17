@@ -78,7 +78,7 @@ export const INITIAL_ROSTER = Array.from({ length: 18 }, (_, i) => ({
   number: i + 1,
   name: `Player ${i + 1}`,
   position: 'FP',
-  isSuspended: false // New field
+  suspendedPeriods: [] // New field replacing isSuspended
 }));
 
 export const PERIODS = [1, 2, 3, 4];

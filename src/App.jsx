@@ -207,20 +207,40 @@ export default function App() {
   };
 
   const toggleSuspended = (id) => {
+    // 1. Determine new state based on CURRENT roster
+    let player = roster.find(p => p.id === id);
+    if (!player) return;
+
+    const currentSuspended = player.suspendedPeriods || [];
+    const isCurrentlySuspendedInActive = currentSuspended.includes(activePeriod);
+
+    let newSuspendedPeriods;
+    let periodsToRemoveFromField = [];
+
+    if (isCurrentlySuspendedInActive) {
+      // Unsuspend: Remove activePeriod and all future periods
+      newSuspendedPeriods = currentSuspended.filter(p => p < activePeriod);
+    } else {
+      // Suspend: Add activePeriod and all future periods
+      const futurePeriods = [1, 2, 3, 4].filter(p => p >= activePeriod);
+      newSuspendedPeriods = [...new Set([...currentSuspended, ...futurePeriods])];
+      periodsToRemoveFromField = futurePeriods;
+    }
+
+    // 2. Update Roster
     setRoster(prev => prev.map(p =>
-      p.id === id ? { ...p, isSuspended: !p.isSuspended } : p
+      p.id === id ? { ...p, suspendedPeriods: newSuspendedPeriods } : p
     ));
 
-    const player = roster.find(p => p.id === id);
-    if (player && !player.isSuspended) {
-      // If suspending, remove from all periods
+    // 3. Update PeriodsData (Remove from field if suspending)
+    if (periodsToRemoveFromField.length > 0) {
       setPeriodsData(prev => {
         const newData = { ...prev };
-        Object.keys(newData).forEach(pId => {
-          if (newData[pId][id]) {
-            const newP = { ...newData[pId] };
-            delete newP[id];
-            newData[pId] = newP;
+        periodsToRemoveFromField.forEach(periodId => {
+          if (newData[periodId] && newData[periodId][id]) {
+            const newPeriodPositions = { ...newData[periodId] };
+            delete newPeriodPositions[id];
+            newData[periodId] = newPeriodPositions;
           }
         });
         return newData;
@@ -281,6 +301,7 @@ export default function App() {
             onAddPlayer={addPlayer}
             onDeletePlayer={deletePlayer}
             onToggleSuspended={toggleSuspended}
+            activePeriod={activePeriod}
           />
         </div>
       </div>

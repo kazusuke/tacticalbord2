@@ -4,7 +4,7 @@ import { Plus, Trash2, Users, Ban } from 'lucide-react';
 import styles from './Roster.module.css';
 import { PERIODS } from '../constants'; // Import PERIODS [1, 2, 3, 4]
 
-export function Roster({ players, fieldPlayers, playingTimes, playedPeriods, onAddPlayer, onDeletePlayer, onToggleSuspended }) {
+export function Roster({ players, fieldPlayers, playingTimes, playedPeriods, onAddPlayer, onDeletePlayer, onToggleSuspended, activePeriod }) {
     return (
         <div className={`glass-panel ${styles.panel}`}>
             <div className={styles.header}>
@@ -21,8 +21,9 @@ export function Roster({ players, fieldPlayers, playingTimes, playedPeriods, onA
                     .sort((a, b) => {
                         const aOnField = fieldPlayers.has(a.id);
                         const bOnField = fieldPlayers.has(b.id);
-                        const aSuspended = a.isSuspended;
-                        const bSuspended = b.isSuspended;
+
+                        const aSuspended = (a.suspendedPeriods || []).includes(activePeriod);
+                        const bSuspended = (b.suspendedPeriods || []).includes(activePeriod);
 
                         // 1. Suspended last
                         if (aSuspended !== bSuspended) return aSuspended ? 1 : -1;
@@ -38,8 +39,9 @@ export function Roster({ players, fieldPlayers, playingTimes, playedPeriods, onA
                     .map(player => {
                         const isOnField = fieldPlayers.has(player.id);
                         const time = playingTimes[player.id] || 0;
-                        const isSuspended = player.isSuspended;
-                        const periodsPlayed = playedPeriods ? playedPeriods[player.id] : new Set(); // Defensive check
+                        const suspendedPeriods = player.suspendedPeriods || [];
+                        const isSuspended = suspendedPeriods.includes(activePeriod);
+                        const periodsPlayed = playedPeriods ? playedPeriods[player.id] : new Set();
 
                         return (
                             <div
@@ -73,13 +75,14 @@ export function Roster({ players, fieldPlayers, playingTimes, playedPeriods, onA
                                         <div className={styles.blocks}>
                                             {PERIODS.map(p => {
                                                 const played = periodsPlayed?.has(p);
+                                                const pSuspended = suspendedPeriods.includes(p);
                                                 return (
                                                     <div
                                                         key={p}
                                                         className={`
                                         ${styles.block} 
                                         ${played ? styles.playedBlock : ''}
-                                        ${isSuspended ? styles.suspendedBlock : ''}
+                                        ${pSuspended ? styles.suspendedBlock : ''}
                                     `}
                                                         title={`Period ${p}`}
                                                     ></div>
