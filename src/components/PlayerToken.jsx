@@ -4,7 +4,7 @@ import { CSS } from '@dnd-kit/utilities';
 import PropTypes from 'prop-types';
 import styles from './PlayerToken.module.css';
 
-export function PlayerToken({ player, id, style = {}, className = '', showName = true }) {
+export function PlayerToken({ player, id, style = {}, className = '', showName = true, onClick }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: id,
         data: { player }
@@ -23,6 +23,7 @@ export function PlayerToken({ player, id, style = {}, className = '', showName =
             {...attributes}
             className={`${styles.token} ${isDragging ? styles.isDragging : ''} ${className}`}
             title={player.name}
+            onClick={onClick} // Attach onClick
         >
             <div className={styles.circle}>
                 {player.number}
@@ -41,5 +42,6 @@ PlayerToken.propTypes = {
     id: PropTypes.string.isRequired,
     style: PropTypes.object,
     className: PropTypes.string,
-    showName: PropTypes.bool
+    showName: PropTypes.bool,
+    onClick: PropTypes.func
 };

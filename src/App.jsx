@@ -5,6 +5,7 @@ import { Field } from './components/Field';
 import { Controls } from './components/Controls';
 import { Roster } from './components/Roster';
 import { PlayerToken } from './components/PlayerToken';
+import { PlayerSelectionModal } from './components/PlayerSelectionModal';
 import { INITIAL_ROSTER, FORMATION_PRESETS, PERIOD_minutes } from './constants';
 import './index.css';
 import styles from './App.module.css';
@@ -20,6 +21,10 @@ export default function App() {
 
   const [activeDragId, setActiveDragId] = useState(null);
   const [dragStartSource, setDragStartSource] = useState(null);
+
+  // Substitution Modal State
+  const [isSubstitutionModalOpen, setIsSubstitutionModalOpen] = useState(false);
+  const [substitutionTargetId, setSubstitutionTargetId] = useState(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -248,6 +253,48 @@ export default function App() {
     }
   };
 
+  // --- Tap-to-Substitute Logic ---
+
+  const handleFieldPlayerClick = (id) => {
+    setSubstitutionTargetId(id);
+    setIsSubstitutionModalOpen(true);
+  };
+
+  const handleSubstitution = (replacementId) => {
+    if (!substitutionTargetId) return;
+
+    setPeriodsData(prev => {
+      const currentPeriod = prev[activePeriod];
+      const targetPos = currentPeriod[substitutionTargetId];
+
+      if (!targetPos) return prev; // Should not happen
+
+      // Check if replacement is already on field
+      const replacementPos = currentPeriod[replacementId];
+
+      let newPeriodData = { ...currentPeriod };
+
+      if (replacementPos) {
+        // Swap positions on field
+        newPeriodData[substitutionTargetId] = replacementPos;
+        newPeriodData[replacementId] = targetPos;
+      } else {
+        // Replace: Remove target, Add replacement at target's pos
+        delete newPeriodData[substitutionTargetId];
+        newPeriodData[replacementId] = targetPos;
+      }
+
+      return {
+        ...prev,
+        [activePeriod]: newPeriodData
+      };
+    });
+
+    setIsSubstitutionModalOpen(false);
+    setSubstitutionTargetId(null);
+  };
+
+
   const activeFieldPlayers = useMemo(() => {
     const currentPositions = periodsData[activePeriod] || {};
     return Object.entries(currentPositions).map(([pid, pos]) => {
@@ -289,6 +336,7 @@ export default function App() {
           <Field
             players={activeFieldPlayers}
             activeId={activeDragId}
+            onPlayerClick={handleFieldPlayerClick}
           />
         </div>
 
@@ -305,6 +353,15 @@ export default function App() {
           />
         </div>
       </div>
+
+      <PlayerSelectionModal
+        isOpen={isSubstitutionModalOpen}
+        onClose={() => setIsSubstitutionModalOpen(false)}
+        players={roster}
+        onSelectPlayer={handleSubstitution}
+        activePeriod={activePeriod}
+        fieldPlayers={activeSet}
+      />
 
       <DragOverlay>
         {activeDragPlayer ? (

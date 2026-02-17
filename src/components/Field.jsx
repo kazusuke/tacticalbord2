@@ -3,7 +3,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { PlayerToken } from './PlayerToken';
 import styles from './Field.module.css';
 
-export function Field({ players, activeId }) {
+export function Field({ players, activeId, onPlayerClick }) {
     const { setNodeRef } = useDroppable({
         id: 'field',
     });
@@ -37,6 +37,7 @@ export function Field({ players, activeId }) {
                         key={p.player.id}
                         id={p.player.id}
                         player={p.player}
+                        onClick={() => onPlayerClick && onPlayerClick(p.player.id)}
                         style={{
                             left: `${p.x}%`,
                             top: `${p.y}%`,
